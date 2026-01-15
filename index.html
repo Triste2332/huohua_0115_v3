@@ -270,6 +270,12 @@
             background: linear-gradient(90deg, #51cf66, #40c057);
         }
         
+        .layer-cost {
+            font-size: 0.75rem;
+            color: #ffcc00;
+            margin-top: 5px;
+        }
+        
         .layer-rewards {
             display: flex;
             align-items: center;
@@ -311,6 +317,12 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
+        }
+        
+        .cost-display {
+            font-size: 0.9rem;
+            color: #ffcc00;
+            margin-bottom: 8px;
         }
         
         .cards-container {
@@ -649,7 +661,7 @@
     <div class="container">
         <header>
             <h1><i class="fas fa-chess-board"></i> 36格翻牌抽奖系统</h1>
-            <p class="subtitle">抽到大奖可选择继续抽或进入下一层</p>
+            <p class="subtitle">抽到大奖可选择继续抽或进入下一层 | 每层花费不同</p>
             
             <div class="currency-display">
                 <div class="currency exploration-coin">
@@ -696,6 +708,9 @@
                     <h3><i class="fas fa-chess-board"></i> 第 <span id="layer-number">1</span> 层 (6×6)</h3>
                     <p>抽到大奖后可选择继续或进入下一层</p>
                     <div id="jackpot-message" class="jackpot-message"></div>
+                    <div class="cost-display">
+                        当前层花费: <span id="current-cost">10</span> 火花币/次 | <span id="current-cost-five">50</span> 火花币/5次
+                    </div>
                     <div class="progress-container">
                         <div class="progress-text">
                             <span>当前进度</span>
@@ -722,10 +737,10 @@
                 
                 <div class="controls">
                     <button class="btn btn-primary" id="flip-one">
-                        <i class="fas fa-redo"></i> 探一次 (10火花币)
+                        <i class="fas fa-redo"></i> 探一次 (<span id="flip-one-cost">10</span>火花币)
                     </button>
                     <button class="btn btn-secondary" id="flip-five">
-                        <i class="fas fa-sync-alt"></i> 探五次 (50火花币)
+                        <i class="fas fa-sync-alt"></i> 探五次 (<span id="flip-five-cost">50</span>火花币)
                     </button>
                     <button class="btn btn-success" id="next-layer" disabled>
                         <i class="fas fa-arrow-right"></i> 下一层
@@ -756,6 +771,16 @@
             jackpotIndex: -1, // 大奖的位置
             totalSpent: 0, // 总花费火花币
             resetCount: 0, // 重置次数
+            
+            // 每层花费配置
+            layerCosts: {
+                1: { single: 10, five: 50 },   // 第一层：探一次10，探五次50
+                2: { single: 20, five: 100 },  // 第二层：探一次20，探五次100
+                3: { single: 50, five: 250 },  // 第三层：探一次50，探五次250
+                4: { single: 80, five: 400 },  // 第四层：探一次80，探五次400
+                5: { single: 100, five: 500 }  // 第五层：探一次100，探五次500
+            },
+            
             layers: [
                 {
                     id: 1,
@@ -860,6 +885,10 @@
         const progressFillEl = document.getElementById('progress-fill');
         const flipOneBtn = document.getElementById('flip-one');
         const flipFiveBtn = document.getElementById('flip-five');
+        const flipOneCostEl = document.getElementById('flip-one-cost');
+        const flipFiveCostEl = document.getElementById('flip-five-cost');
+        const currentCostEl = document.getElementById('current-cost');
+        const currentCostFiveEl = document.getElementById('current-cost-five');
         const nextLayerBtn = document.getElementById('next-layer');
         const recentRewardsEl = document.getElementById('recent-rewards');
         const jackpotMessageEl = document.getElementById('jackpot-message');
@@ -883,6 +912,11 @@
             updateProgress();
         }
 
+        // 获取当前层花费
+        function getCurrentLayerCost() {
+            return gameData.layerCosts[gameData.currentLayer] || gameData.layerCosts[1];
+        }
+
         // 更新货币显示
         function updateCurrencyDisplay() {
             explorationCoinEl.textContent = gameData.explorationCoin;
@@ -893,6 +927,15 @@
         function updateStatsDisplay() {
             totalSpentEl.textContent = gameData.totalSpent;
             resetCountEl.textContent = gameData.resetCount;
+        }
+
+        // 更新花费显示
+        function updateCostDisplay() {
+            const cost = getCurrentLayerCost();
+            flipOneCostEl.textContent = cost.single;
+            flipFiveCostEl.textContent = cost.five;
+            currentCostEl.textContent = cost.single;
+            currentCostFiveEl.textContent = cost.five;
         }
 
         // 添加火花币功能
@@ -949,6 +992,7 @@
             gameData.flippedCards = 0;
             gameData.currentLayerCards = [];
             gameData.recentRewards = [];
+            gameData.totalSpent = 0;
             gameData.resetCount++;
             
             // 重置所有层级
@@ -972,6 +1016,7 @@
             // 更新显示
             updateCurrencyDisplay();
             updateStatsDisplay();
+            updateCostDisplay();
             renderLayerList();
             loadLayer(gameData.currentLayer);
             
@@ -1014,6 +1059,8 @@
                     statusClass = 'status-active';
                 }
                 
+                const cost = gameData.layerCosts[layer.id];
+                
                 layerItem.innerHTML = `
                     <div class="layer-header">
                         <div class="layer-title">${layer.name}</div>
@@ -1022,6 +1069,9 @@
                     <div class="layer-info">
                         <p>6×6 共36格 | 大奖: ${layer.jackpotReward}</p>
                         <p>常规奖励: ${layer.normalRewards.slice(0, 3).join('、')}...</p>
+                    </div>
+                    <div class="layer-cost">
+                        花费: ${cost.single}火花币/次 | ${cost.five}火花币/5次
                     </div>
                 `;
                 
@@ -1054,6 +1104,9 @@
             
             // 更新UI
             layerNumberEl.textContent = layerId;
+            
+            // 更新花费显示
+            updateCostDisplay();
             
             // 重置翻牌计数
             gameData.flippedCards = 0;
@@ -1161,20 +1214,21 @@
         function flipCard(cardIndex) {
             const card = document.querySelector(`.card[data-index="${cardIndex}"]`);
             const layer = gameData.layers[gameData.currentLayer-1];
+            const cost = getCurrentLayerCost();
             
             if (!card || gameData.currentLayerCards[cardIndex].flipped || layer.completed) {
                 return;
             }
             
             // 检查是否有足够火花币
-            if (gameData.sparkCoin < 10) {
-                alert('火花币不足！');
+            if (gameData.sparkCoin < cost.single) {
+                alert(`火花币不足！需要 ${cost.single} 火花币`);
                 return;
             }
             
             // 扣除火花币并记录花费
-            gameData.sparkCoin -= 10;
-            gameData.totalSpent += 10;
+            gameData.sparkCoin -= cost.single;
+            gameData.totalSpent += cost.single;
             
             updateCurrencyDisplay();
             updateStatsDisplay();
@@ -1246,14 +1300,15 @@
         // 翻五张牌
         function flipFiveCards() {
             const layer = gameData.layers[gameData.currentLayer-1];
+            const cost = getCurrentLayerCost();
             
             if (layer.completed || gameData.jackpotFound) {
                 return;
             }
             
             // 检查是否有足够火花币
-            if (gameData.sparkCoin < 50) {
-                alert('火花币不足！');
+            if (gameData.sparkCoin < cost.five) {
+                alert(`火花币不足！需要 ${cost.five} 火花币`);
                 return;
             }
             
@@ -1268,8 +1323,8 @@
             const cardsToFlip = Math.min(5, unflippedCards.length);
             
             // 扣除火花币并记录花费
-            gameData.sparkCoin -= 50;
-            gameData.totalSpent += 50;
+            gameData.sparkCoin -= cost.five;
+            gameData.totalSpent += cost.five;
             
             updateCurrencyDisplay();
             updateStatsDisplay();
