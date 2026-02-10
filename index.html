@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>彩虹王国 - 图腾连线抽奖</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -10,104 +10,232 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Arial Rounded MT Bold', 'Arial', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+        }
+        
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+            -webkit-text-size-adjust: 100%;
+            -moz-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+            text-size-adjust: 100%;
         }
         
         body {
             background: linear-gradient(135deg, #0c0c2e 0%, #1a1a4a 100%);
             color: #fff;
+            position: relative;
+            padding: 0;
             min-height: 100vh;
-            padding: 20px;
+        }
+        
+        /* 禁止长按复制 */
+        * {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        /* 防止IOS点击延迟 */
+        * {
+            -webkit-touch-callout: none;
         }
         
         .container {
-            max-width: 800px;
+            width: 100%;
+            max-width: 480px;
             margin: 0 auto;
-            padding-bottom: 80px;
+            padding: 10px 15px 80px;
+            min-height: 100vh;
         }
         
-        header {
-            text-align: center;
-            margin-bottom: 20px;
+        /* 顶部区域 */
+        .header-area {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(12, 12, 46, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 10px 0;
+            margin: -10px -15px 15px;
+            padding-left: 15px;
+            padding-right: 15px;
+            border-bottom: 1px solid rgba(122, 95, 255, 0.2);
         }
         
         .logo {
-            font-size: 2.5rem;
+            font-size: 1.8rem;
             color: #ff4d94;
             text-shadow: 0 0 10px rgba(255, 77, 148, 0.7);
-            margin-bottom: 10px;
+            margin-bottom: 5px;
+            text-align: center;
         }
         
         .title {
-            font-size: 1.8rem;
+            font-size: 1.2rem;
             background: linear-gradient(90deg, #ff4d94, #7a5fff);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
+            text-align: center;
+            line-height: 1.3;
         }
         
         .subtitle {
-            font-size: 1rem;
+            font-size: 0.75rem;
             color: #a0a0ff;
-            margin-bottom: 20px;
+            text-align: center;
+            line-height: 1.2;
+            margin-bottom: 5px;
         }
         
-        .game-area {
+        /* 货币区域 */
+        .currency-top-bar {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0 15px;
+            gap: 10px;
+        }
+        
+        .currency-item {
+            flex: 1;
+            background: rgba(40, 40, 90, 0.8);
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .currency-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .currency-icon {
+            font-size: 1.5rem;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .gem-icon {
+            background: linear-gradient(135deg, #ff4d94, #ff7a5f);
+            color: white;
+        }
+        
+        .diamond-icon {
+            background: linear-gradient(135deg, #7a5fff, #4d9dff);
+            color: white;
+        }
+        
+        .currency-details {
             display: flex;
             flex-direction: column;
-            gap: 20px;
         }
         
-        @media (min-width: 768px) {
-            .game-area {
-                flex-direction: row;
-            }
-            
-            .left-panel {
-                flex: 3;
-            }
-            
-            .right-panel {
-                flex: 2;
-            }
+        .currency-count {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #fff;
+            line-height: 1.2;
+        }
+        
+        .currency-label {
+            font-size: 0.7rem;
+            color: #a0a0ff;
+        }
+        
+        .add-currency-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, #4dffb8, #00cc88);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 3px 8px rgba(77, 255, 184, 0.4);
+        }
+        
+        .add-currency-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 1px 5px rgba(77, 255, 184, 0.6);
+        }
+        
+        .add-currency-btn.diamond-btn {
+            background: linear-gradient(135deg, #7a5fff, #4d9dff);
+        }
+        
+        /* 主游戏区域 */
+        .main-game-area {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
         
         .panel {
-            background: rgba(30, 30, 70, 0.8);
-            border-radius: 15px;
-            padding: 20px;
+            background: rgba(30, 30, 70, 0.9);
+            border-radius: 16px;
+            padding: 18px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(100, 100, 255, 0.2);
+            border: 1px solid rgba(100, 100, 255, 0.15);
+            backdrop-filter: blur(5px);
         }
         
         .section-title {
-            font-size: 1.3rem;
+            font-size: 1.1rem;
             color: #7a5fff;
             margin-bottom: 15px;
             padding-bottom: 8px;
             border-bottom: 1px solid rgba(122, 95, 255, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .section-title i {
+            font-size: 1rem;
         }
         
         /* 图腾网格 */
         .totem-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            grid-gap: 8px;
-            margin: 20px 0;
+            grid-gap: 6px;
+            margin: 15px 0;
         }
         
         .totem-cell {
             aspect-ratio: 1/1;
             background: rgba(40, 40, 90, 0.7);
-            border-radius: 8px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.8rem;
-            transition: all 0.3s ease;
+            font-size: 1.5rem;
+            transition: all 0.2s ease;
             position: relative;
             overflow: hidden;
+            touch-action: manipulation;
+        }
+        
+        .totem-cell:active {
+            transform: scale(0.95);
         }
         
         .totem-cell.active {
@@ -116,32 +244,24 @@
             transform: scale(1.05);
         }
         
-        .totem-cell.connected {
-            animation: pulse 1s infinite alternate;
-        }
-        
-        @keyframes pulse {
-            from { box-shadow: 0 0 10px rgba(122, 95, 255, 0.7); }
-            to { box-shadow: 0 0 20px rgba(122, 95, 255, 1); }
-        }
-        
         /* 连线提示 */
         .lines-indicator {
             display: flex;
             justify-content: space-between;
-            margin-top: 20px;
+            margin-top: 15px;
             flex-wrap: wrap;
+            gap: 8px;
         }
         
         .line-type {
             display: flex;
             align-items: center;
-            margin: 5px;
+            font-size: 0.8rem;
         }
         
         .line-dot {
-            width: 12px;
-            height: 12px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
             margin-right: 5px;
         }
@@ -150,83 +270,12 @@
         .vertical { background-color: #7a5fff; }
         .diagonal { background-color: #4dffb8; }
         
-        /* 召唤区域 */
-        .summon-area {
-            text-align: center;
-            margin: 20px 0;
-        }
-        
-        .currency-container {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        
-        .currency-item {
-            background: rgba(40, 40, 90, 0.7);
-            border-radius: 10px;
-            padding: 12px 15px;
-            flex: 1;
-            min-width: 120px;
-        }
-        
-        .currency-count {
-            font-size: 1.3rem;
-            color: #4dffb8;
-            margin-bottom: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        
-        .currency-count i {
-            color: #ff4d94;
-        }
-        
-        .currency-label {
-            font-size: 0.9rem;
-            color: #a0a0ff;
-        }
-        
-        .add-currency-btn {
-            background: linear-gradient(135deg, #4dffb8, #00cc88);
-            color: white;
-            border: none;
-            border-radius: 50px;
-            padding: 5px 10px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-            box-shadow: 0 3px 10px rgba(77, 255, 184, 0.4);
-            margin-top: 8px;
-            width: 100%;
-        }
-        
-        .add-currency-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(77, 255, 184, 0.6);
-        }
-        
-        .add-currency-btn.diamond-btn {
-            background: linear-gradient(135deg, #7a5fff, #4d9dff);
-        }
-        
-        .add-currency-btn.gem-bulk-btn {
-            background: linear-gradient(135deg, #ff4d94, #ff7a5f);
-        }
-        
+        /* 召唤按钮区域 */
         .summon-buttons {
             display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 20px;
+            flex-direction: column;
+            gap: 12px;
+            margin: 15px 0;
         }
         
         .summon-btn {
@@ -234,24 +283,24 @@
             color: white;
             border: none;
             border-radius: 50px;
-            padding: 15px 30px;
-            font-size: 1.2rem;
+            padding: 18px 20px;
+            font-size: 1.1rem;
+            font-weight: bold;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
             box-shadow: 0 5px 15px rgba(122, 95, 255, 0.4);
-        }
-        
-        .summon-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(122, 95, 255, 0.6);
+            touch-action: manipulation;
+            position: relative;
+            overflow: hidden;
         }
         
         .summon-btn:active {
-            transform: translateY(1px);
+            transform: translateY(2px);
+            box-shadow: 0 2px 8px rgba(122, 95, 255, 0.6);
         }
         
         .summon-btn:disabled {
@@ -259,6 +308,23 @@
             cursor: not-allowed;
             transform: none;
             box-shadow: none;
+            opacity: 0.7;
+        }
+        
+        .summon-btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: rotate(30deg);
+            transition: transform 0.5s;
+        }
+        
+        .summon-btn:hover::after {
+            transform: rotate(30deg) translate(50%, 50%);
         }
         
         /* 统计信息 */
@@ -266,12 +332,12 @@
             margin: 15px 0;
             padding: 15px;
             background: rgba(40, 40, 90, 0.5);
-            border-radius: 10px;
+            border-radius: 12px;
             border-left: 4px solid #4dffb8;
         }
         
         .stats-title {
-            font-size: 1rem;
+            font-size: 0.95rem;
             color: #4dffb8;
             margin-bottom: 10px;
             display: flex;
@@ -282,7 +348,7 @@
         .stats-content {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
+            gap: 12px;
         }
         
         .stat-item {
@@ -291,7 +357,7 @@
         }
         
         .stat-label {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: #a0a0ff;
             margin-bottom: 3px;
         }
@@ -302,326 +368,16 @@
             font-weight: bold;
         }
         
-        /* 任务列表 */
-        .tasks-list {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        
-        .task-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 15px;
-            background: rgba(50, 50, 100, 0.5);
-            border-radius: 10px;
-            transition: all 0.3s ease;
-        }
-        
-        .task-item:hover {
-            background: rgba(50, 50, 100, 0.8);
-        }
-        
-        .task-info h4 {
-            font-size: 1rem;
-            margin-bottom: 5px;
-        }
-        
-        .task-info p {
-            font-size: 0.9rem;
-            color: #a0a0ff;
-        }
-        
-        .task-reward {
-            display: flex;
-            align-items: center;
-            color: #4dffb8;
-            font-weight: bold;
-        }
-        
-        .task-reward i {
-            margin-right: 5px;
-        }
-        
-        .task-complete {
-            background: rgba(77, 255, 184, 0.2);
-            border-left: 4px solid #4dffb8;
-        }
-        
-        /* 规则面板 */
-        .rules-list {
-            padding-left: 20px;
-        }
-        
-        .rules-list li {
-            margin-bottom: 10px;
-            line-height: 1.4;
-            color: #d0d0ff;
-        }
-        
-        /* 奖励弹窗 */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .modal-content {
-            background: linear-gradient(135deg, #1a1a4a, #0c0c2e);
-            width: 90%;
-            max-width: 500px;
-            border-radius: 20px;
-            padding: 30px;
-            text-align: center;
-            border: 2px solid #7a5fff;
-            box-shadow: 0 0 30px rgba(122, 95, 255, 0.7);
-            animation: modalAppear 0.5s ease;
-        }
-        
-        @keyframes modalAppear {
-            from { transform: scale(0.5); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-        
-        .reward-icon {
-            font-size: 4rem;
-            color: #ff4d94;
-            margin: 20px 0;
-        }
-        
-        .reward-title {
-            font-size: 2rem;
-            color: #4dffb8;
-            margin-bottom: 10px;
-        }
-        
-        .reward-desc {
-            color: #d0d0ff;
-            margin-bottom: 25px;
-            line-height: 1.5;
-        }
-        
-        .close-modal {
-            background: #7a5fff;
-            color: white;
-            border: none;
-            border-radius: 50px;
-            padding: 12px 30px;
-            font-size: 1.1rem;
-            cursor: pointer;
-        }
-        
-        /* 抽奖弹窗 */
-        .lottery-modal-content {
-            max-width: 600px;
-        }
-        
-        .lottery-prize {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 20px 0;
-            padding: 20px;
-            background: rgba(40, 40, 90, 0.5);
-            border-radius: 15px;
-            border: 2px solid #7a5fff;
-        }
-        
-        .lottery-prize-icon {
-            font-size: 3rem;
-            margin-right: 15px;
-            color: #ff4d94;
-        }
-        
-        .lottery-prize-info h3 {
-            font-size: 1.5rem;
-            color: #4dffb8;
-            margin-bottom: 5px;
-        }
-        
-        .lottery-prize-info p {
-            color: #a0a0ff;
-            font-size: 1rem;
-        }
-        
-        /* 概率表格 */
-        .probability-table {
-            width: 100%;
-            margin: 20px 0;
-            border-collapse: collapse;
-        }
-        
-        .probability-table th {
-            background: rgba(122, 95, 255, 0.3);
-            padding: 12px 10px;
-            text-align: left;
-            color: #ff4d94;
-            font-size: 0.9rem;
-        }
-        
-        .probability-table td {
-            padding: 10px;
-            border-bottom: 1px solid rgba(122, 95, 255, 0.2);
-            color: #d0d0ff;
-        }
-        
-        .probability-table tr:hover {
-            background: rgba(122, 95, 255, 0.1);
-        }
-        
-        .probability-table .percent {
-            color: #4dffb8;
-            font-weight: bold;
-        }
-        
-        .probability-table .amount {
-            color: #ffb84d;
-        }
-        
-        /* 获取宝石弹窗 */
-        .gem-modal-content {
-            max-width: 450px;
-        }
-        
-        .gem-options {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin: 20px 0;
-        }
-        
-        .gem-option {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px;
-            background: rgba(40, 40, 90, 0.5);
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .gem-option:hover {
-            background: rgba(40, 40, 90, 0.8);
-            transform: translateY(-2px);
-        }
-        
-        .gem-option-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .gem-option-icon {
-            font-size: 1.5rem;
-            color: #ff4d94;
-        }
-        
-        .gem-option-reward {
-            color: #4dffb8;
-            font-weight: bold;
-            font-size: 1.1rem;
-        }
-        
-        .gem-option.bulk-option {
-            background: linear-gradient(135deg, rgba(255, 77, 148, 0.3), rgba(255, 122, 95, 0.3));
-            border: 2px solid #ff4d94;
-        }
-        
-        /* 添加钻石弹窗 */
-        .diamond-options {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin: 20px 0;
-        }
-        
-        .diamond-option {
-            background: rgba(40, 40, 90, 0.5);
-            border-radius: 10px;
-            padding: 15px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-        }
-        
-        .diamond-option:hover {
-            background: rgba(40, 40, 90, 0.8);
-            border-color: #7a5fff;
-            transform: translateY(-3px);
-        }
-        
-        .diamond-option-icon {
-            font-size: 2rem;
-            color: #4d9dff;
-            margin-bottom: 10px;
-        }
-        
-        .diamond-option-amount {
-            font-size: 1.2rem;
-            color: #4dffb8;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        
-        .diamond-option-desc {
-            font-size: 0.9rem;
-            color: #a0a0ff;
-        }
-        
-        /* 底部导航 */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: rgba(20, 20, 50, 0.95);
-            display: flex;
-            justify-content: space-around;
-            padding: 15px 0;
-            border-top: 1px solid rgba(122, 95, 255, 0.3);
-        }
-        
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: #a0a0ff;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .nav-item.active {
-            color: #7a5fff;
-        }
-        
-        .nav-item i {
-            font-size: 1.5rem;
-            margin-bottom: 5px;
-        }
-        
-        .nav-item:hover {
-            color: #7a5fff;
-        }
-        
         /* 进度条 */
         .progress-container {
-            margin: 20px 0;
+            margin: 15px 0;
         }
         
         .progress-label {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
         }
         
         .progress-bar {
@@ -639,38 +395,419 @@
             transition: width 0.5s ease;
         }
         
+        /* 任务列表 */
+        .tasks-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .task-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px;
+            background: rgba(50, 50, 100, 0.5);
+            border-radius: 12px;
+            transition: all 0.2s ease;
+            touch-action: manipulation;
+        }
+        
+        .task-item:active {
+            background: rgba(50, 50, 100, 0.8);
+            transform: scale(0.98);
+        }
+        
+        .task-info h4 {
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+        }
+        
+        .task-info p {
+            font-size: 0.8rem;
+            color: #a0a0ff;
+        }
+        
+        .task-reward {
+            display: flex;
+            align-items: center;
+            color: #4dffb8;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        
+        .task-reward i {
+            margin-right: 5px;
+        }
+        
+        .task-complete {
+            background: rgba(77, 255, 184, 0.2);
+            border-left: 4px solid #4dffb8;
+        }
+        
+        /* 规则面板 */
+        .rules-list {
+            padding-left: 18px;
+        }
+        
+        .rules-list li {
+            margin-bottom: 10px;
+            line-height: 1.4;
+            color: #d0d0ff;
+            font-size: 0.85rem;
+        }
+        
+        /* 底部导航 */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(20, 20, 50, 0.98);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            border-top: 1px solid rgba(122, 95, 255, 0.3);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #a0a0ff;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            touch-action: manipulation;
+            padding: 5px 10px;
+            border-radius: 10px;
+            min-width: 60px;
+        }
+        
+        .nav-item:active {
+            background: rgba(122, 95, 255, 0.2);
+            transform: scale(0.95);
+        }
+        
+        .nav-item.active {
+            color: #7a5fff;
+            background: rgba(122, 95, 255, 0.1);
+        }
+        
+        .nav-item i {
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+        }
+        
+        .nav-item span {
+            font-size: 0.75rem;
+        }
+        
+        /* 弹窗 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .modal-content {
+            background: linear-gradient(135deg, #1a1a4a, #0c0c2e);
+            width: 100%;
+            max-width: 400px;
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            border: 2px solid #7a5fff;
+            box-shadow: 0 0 30px rgba(122, 95, 255, 0.7);
+            animation: modalAppear 0.4s ease;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        
+        @keyframes modalAppear {
+            from { transform: translateY(50px) scale(0.9); opacity: 0; }
+            to { transform: translateY(0) scale(1); opacity: 1; }
+        }
+        
+        .reward-icon {
+            font-size: 3.5rem;
+            color: #ff4d94;
+            margin: 15px 0;
+        }
+        
+        .reward-title {
+            font-size: 1.5rem;
+            color: #4dffb8;
+            margin-bottom: 10px;
+            line-height: 1.3;
+        }
+        
+        .reward-desc {
+            color: #d0d0ff;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            font-size: 0.95rem;
+        }
+        
+        .close-modal {
+            background: #7a5fff;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 14px 30px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+            max-width: 200px;
+            margin: 0 auto;
+            display: block;
+            touch-action: manipulation;
+        }
+        
+        .close-modal:active {
+            transform: scale(0.95);
+            background: #6a4fff;
+        }
+        
+        /* 概率表格 */
+        .probability-table {
+            width: 100%;
+            margin: 15px 0;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+        
+        .probability-table th {
+            background: rgba(122, 95, 255, 0.3);
+            padding: 10px 8px;
+            text-align: left;
+            color: #ff4d94;
+        }
+        
+        .probability-table td {
+            padding: 8px;
+            border-bottom: 1px solid rgba(122, 95, 255, 0.2);
+            color: #d0d0ff;
+        }
+        
+        .probability-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .probability-table .percent {
+            color: #4dffb8;
+            font-weight: bold;
+        }
+        
+        .probability-table .amount {
+            color: #ffb84d;
+        }
+        
+        /* 获取宝石弹窗 */
+        .gem-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 15px 0;
+        }
+        
+        .gem-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: rgba(40, 40, 90, 0.5);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            touch-action: manipulation;
+        }
+        
+        .gem-option:active {
+            background: rgba(40, 40, 90, 0.8);
+            transform: scale(0.98);
+        }
+        
+        .gem-option-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .gem-option-icon {
+            font-size: 1.5rem;
+            color: #ff4d94;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 77, 148, 0.1);
+            border-radius: 10px;
+        }
+        
+        .gem-option-reward {
+            color: #4dffb8;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        .gem-option.bulk-option {
+            background: linear-gradient(135deg, rgba(255, 77, 148, 0.3), rgba(255, 122, 95, 0.3));
+            border: 2px solid #ff4d94;
+        }
+        
+        /* 批量增加宝石按钮 */
+        .bulk-gem-btn-container {
+            margin-top: 15px;
+        }
+        
+        .bulk-gem-btn {
+            background: linear-gradient(135deg, #ff4d94, #ff7a5f);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 16px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 5px 15px rgba(255, 77, 148, 0.4);
+            width: 100%;
+            touch-action: manipulation;
+        }
+        
+        .bulk-gem-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 8px rgba(255, 77, 148, 0.6);
+        }
+        
+        /* 增加钻石选项 */
+        .diamond-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 15px 0;
+        }
+        
+        .diamond-option {
+            background: rgba(40, 40, 90, 0.5);
+            border-radius: 12px;
+            padding: 15px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+            touch-action: manipulation;
+        }
+        
+        .diamond-option:active {
+            background: rgba(40, 40, 90, 0.8);
+            border-color: #7a5fff;
+            transform: scale(0.95);
+        }
+        
+        .diamond-option-icon {
+            font-size: 1.8rem;
+            color: #4d9dff;
+            margin-bottom: 8px;
+        }
+        
+        .diamond-option-amount {
+            font-size: 1rem;
+            color: #4dffb8;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .diamond-option-desc {
+            font-size: 0.75rem;
+            color: #a0a0ff;
+        }
+        
+        /* 抽奖结果 */
+        .lottery-prize {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 15px 0;
+            padding: 20px;
+            background: rgba(40, 40, 90, 0.5);
+            border-radius: 15px;
+            border: 2px solid #7a5fff;
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .lottery-prize-icon {
+            font-size: 2.5rem;
+            color: #ff4d94;
+            margin-bottom: 10px;
+        }
+        
+        .lottery-prize-info h3 {
+            font-size: 1.3rem;
+            color: #4dffb8;
+            margin-bottom: 5px;
+        }
+        
+        .lottery-prize-info p {
+            color: #a0a0ff;
+            font-size: 0.9rem;
+        }
+        
+        /* 滚动条样式 */
+        .modal-content::-webkit-scrollbar {
+            width: 5px;
+        }
+        
+        .modal-content::-webkit-scrollbar-track {
+            background: rgba(40, 40, 90, 0.5);
+            border-radius: 10px;
+        }
+        
+        .modal-content::-webkit-scrollbar-thumb {
+            background: #7a5fff;
+            border-radius: 10px;
+        }
+        
         /* 响应式调整 */
-        @media (max-width: 600px) {
+        @media (max-width: 380px) {
             .container {
-                padding: 10px;
-                padding-bottom: 70px;
+                padding: 8px 12px 80px;
             }
             
             .totem-grid {
-                grid-gap: 5px;
+                grid-gap: 4px;
             }
             
-            .currency-container {
+            .totem-cell {
+                font-size: 1.3rem;
+            }
+            
+            .currency-top-bar {
                 flex-direction: column;
-            }
-            
-            .currency-item {
-                min-width: 100%;
-            }
-            
-            .summon-buttons {
-                flex-direction: column;
-                align-items: center;
-                gap: 10px;
-            }
-            
-            .summon-btn {
-                width: 100%;
-                max-width: 250px;
-            }
-            
-            .panel {
-                padding: 15px;
             }
             
             .diamond-options {
@@ -680,144 +817,222 @@
             .stats-content {
                 grid-template-columns: 1fr;
             }
+            
+            .summon-btn {
+                padding: 16px 15px;
+                font-size: 1rem;
+            }
+        }
+        
+        /* 横屏适配 */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .container {
+                padding-bottom: 60px;
+            }
+            
+            .bottom-nav {
+                padding: 8px 0;
+            }
+            
+            .nav-item i {
+                font-size: 1.1rem;
+                margin-bottom: 3px;
+            }
+            
+            .nav-item span {
+                font-size: 0.7rem;
+            }
+            
+            .totem-grid {
+                grid-gap: 4px;
+            }
+            
+            .totem-cell {
+                font-size: 1.2rem;
+            }
+        }
+        
+        /* 适配iPhone X及以上 */
+        @supports (padding: max(0px)) {
+            .container {
+                padding-left: max(15px, env(safe-area-inset-left));
+                padding-right: max(15px, env(safe-area-inset-right));
+                padding-bottom: max(80px, env(safe-area-inset-bottom) + 60px);
+            }
+            
+            .bottom-nav {
+                padding-bottom: max(12px, env(safe-area-inset-bottom));
+                padding-left: env(safe-area-inset-left);
+                padding-right: env(safe-area-inset-right);
+            }
+            
+            .header-area {
+                padding-top: max(10px, env(safe-area-inset-top));
+                padding-left: max(15px, env(safe-area-inset-left));
+                padding-right: max(15px, env(safe-area-inset-right));
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <header>
+        <!-- 顶部区域 -->
+        <div class="header-area">
             <div class="logo">🌈 彩虹王国</div>
             <h1 class="title">召唤点亮图腾连线拿大奖</h1>
-            <p class="subtitle">每次召唤均有机会获得【图腾奖励】· 点亮图腾方块连线成功后必得对应大奖</p>
-        </header>
+            <p class="subtitle">每次召唤均有机会获得【图腾奖励】</p>
+        </div>
         
-        <div class="game-area">
-            <div class="left-panel">
-                <div class="panel">
-                    <h2 class="section-title">图腾连线</h2>
-                    
-                    <div class="totem-grid" id="totemGrid">
-                        <!-- 图腾网格通过JS生成 -->
+        <!-- 货币区域 -->
+        <div class="currency-top-bar">
+            <div class="currency-item">
+                <div class="currency-info">
+                    <div class="currency-icon gem-icon">
+                        <i class="fas fa-gem"></i>
                     </div>
-                    
-                    <div class="lines-indicator">
-                        <div class="line-type">
-                            <div class="line-dot horizontal"></div>
-                            <span>横线5连</span>
-                        </div>
-                        <div class="line-type">
-                            <div class="line-dot vertical"></div>
-                            <span>竖线5连</span>
-                        </div>
-                        <div class="line-type">
-                            <div class="line-dot diagonal"></div>
-                            <span>斜线5连</span>
-                        </div>
+                    <div class="currency-details">
+                        <div class="currency-count" id="gemCount">50</div>
+                        <div class="currency-label">宝石</div>
                     </div>
                 </div>
+                <button class="add-currency-btn" id="addGemsBtn">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </div>
+            
+            <div class="currency-item">
+                <div class="currency-info">
+                    <div class="currency-icon diamond-icon">
+                        <i class="fas fa-diamond"></i>
+                    </div>
+                    <div class="currency-details">
+                        <div class="currency-count" id="diamondCount">100</div>
+                        <div class="currency-label">钻石</div>
+                    </div>
+                </div>
+                <button class="add-currency-btn diamond-btn" id="addDiamondsBtn">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- 批量增加宝石按钮 -->
+        <div class="bulk-gem-btn-container">
+            <button class="bulk-gem-btn" id="addBulkGemsBtn">
+                <i class="fas fa-bolt"></i>
+                一键增加1000宝石
+            </button>
+        </div>
+        
+        <div class="main-game-area">
+            <!-- 图腾连线区域 -->
+            <div class="panel">
+                <h2 class="section-title">
+                    <i class="fas fa-th-large"></i>
+                    图腾连线
+                </h2>
                 
-                <div class="panel summon-area">
-                    <h2 class="section-title">召唤图腾</h2>
-                    
-                    <div class="currency-container">
-                        <div class="currency-item">
-                            <div class="currency-count">
-                                <i class="fas fa-gem"></i>
-                                <span id="gemCount">50</span>
-                            </div>
-                            <div class="currency-label">宝石</div>
-                            <button class="add-currency-btn" id="addGemsBtn">
-                                <i class="fas fa-plus-circle"></i>
-                                获取宝石
-                            </button>
-                            <button class="add-currency-btn gem-bulk-btn" id="addBulkGemsBtn">
-                                <i class="fas fa-bolt"></i>
-                                +1000宝石
-                            </button>
-                        </div>
-                        
-                        <div class="currency-item">
-                            <div class="currency-count">
-                                <i class="fas fa-diamond"></i>
-                                <span id="diamondCount">100</span>
-                            </div>
-                            <div class="currency-label">钻石</div>
-                            <button class="add-currency-btn diamond-btn" id="addDiamondsBtn">
-                                <i class="fas fa-plus-circle"></i>
-                                增加钻石
-                            </button>
-                        </div>
+                <div class="totem-grid" id="totemGrid">
+                    <!-- 图腾网格通过JS生成 -->
+                </div>
+                
+                <div class="lines-indicator">
+                    <div class="line-type">
+                        <div class="line-dot horizontal"></div>
+                        <span>横线5连</span>
                     </div>
-                    
-                    <!-- 宝石使用统计 -->
-                    <div class="stats-container">
-                        <div class="stats-title">
-                            <i class="fas fa-chart-bar"></i>
-                            宝石使用统计
-                        </div>
-                        <div class="stats-content">
-                            <div class="stat-item">
-                                <div class="stat-label">今日消耗</div>
-                                <div class="stat-value" id="todayUsed">0</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-label">累计消耗</div>
-                                <div class="stat-value" id="totalUsed">0</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-label">单次召唤</div>
-                                <div class="stat-value" id="singleSummon">0</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-label">十连召唤</div>
-                                <div class="stat-value" id="tenSummon">0</div>
-                            </div>
-                        </div>
+                    <div class="line-type">
+                        <div class="line-dot vertical"></div>
+                        <span>竖线5连</span>
                     </div>
-                    
-                    <div class="summon-buttons">
-                        <button class="summon-btn" id="summonOne">
-                            <i class="fas fa-star"></i>
-                            召唤一次 (2宝石)
-                        </button>
-                        <button class="summon-btn" id="summonTen">
-                            <i class="fas fa-star"></i>
-                            召唤十次 (20宝石)
-                        </button>
-                    </div>
-                    
-                    <div class="progress-container">
-                        <div class="progress-label">
-                            <span>今日连线进度</span>
-                            <span id="progressText">0/5</span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress-fill" id="progressFill"></div>
-                        </div>
+                    <div class="line-type">
+                        <div class="line-dot diagonal"></div>
+                        <span>斜线5连</span>
                     </div>
                 </div>
             </div>
             
-            <div class="right-panel">
-                <div class="panel">
-                    <h2 class="section-title">任务列表</h2>
-                    
-                    <div class="tasks-list" id="tasksList">
-                        <!-- 任务通过JS生成 -->
+            <!-- 召唤区域 -->
+            <div class="panel">
+                <h2 class="section-title">
+                    <i class="fas fa-star"></i>
+                    召唤图腾
+                </h2>
+                
+                <div class="summon-buttons">
+                    <button class="summon-btn" id="summonOne">
+                        <i class="fas fa-star"></i>
+                        召唤一次 (2宝石)
+                    </button>
+                    <button class="summon-btn" id="summonTen">
+                        <i class="fas fa-star"></i>
+                        召唤十次 (20宝石)
+                    </button>
+                </div>
+                
+                <!-- 宝石使用统计 -->
+                <div class="stats-container">
+                    <div class="stats-title">
+                        <i class="fas fa-chart-bar"></i>
+                        宝石使用统计
+                    </div>
+                    <div class="stats-content">
+                        <div class="stat-item">
+                            <div class="stat-label">今日消耗</div>
+                            <div class="stat-value" id="todayUsed">0</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">累计消耗</div>
+                            <div class="stat-value" id="totalUsed">0</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">单次召唤</div>
+                            <div class="stat-value" id="singleSummon">0</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">十连召唤</div>
+                            <div class="stat-value" id="tenSummon">0</div>
+                        </div>
                     </div>
                 </div>
                 
-                <div class="panel">
-                    <h2 class="section-title">活动规则</h2>
-                    
-                    <ul class="rules-list">
-                        <li>消耗宝石可随机点亮图腾，每点亮一个图腾可获得图腾奖励，当点亮的图腾横、竖、斜5个连线成功必得对应大奖；</li>
-                        <li>成功连线之前，图腾不会被重复点亮，连线成功后，所有点亮的图腾将被重置；</li>
-                        <li>连线成功后，将根据概率表进行抽奖，获得额外奖励；</li>
-                        <li>分享活动页面、在房间停留5分钟，充值任意金额任务获得宝石日上限1次，收礼任务获得宝石无上限；</li>
-                        <li>活动结束时，未消耗的宝石将清空失效，请您在活动期间及时使用；</li>
-                    </ul>
+                <div class="progress-container">
+                    <div class="progress-label">
+                        <span>今日连线进度</span>
+                        <span id="progressText">0/5</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
                 </div>
+            </div>
+            
+            <!-- 任务列表 -->
+            <div class="panel">
+                <h2 class="section-title">
+                    <i class="fas fa-tasks"></i>
+                    任务列表
+                </h2>
+                
+                <div class="tasks-list" id="tasksList">
+                    <!-- 任务通过JS生成 -->
+                </div>
+            </div>
+            
+            <!-- 活动规则 -->
+            <div class="panel">
+                <h2 class="section-title">
+                    <i class="fas fa-info-circle"></i>
+                    活动规则
+                </h2>
+                
+                <ul class="rules-list">
+                    <li>消耗宝石可随机点亮图腾，每点亮一个图腾可获得图腾奖励，当点亮的图腾横、竖、斜5个连线成功必得对应大奖；</li>
+                    <li>成功连线之前，图腾不会被重复点亮，连线成功后，所有点亮的图腾将被重置；</li>
+                    <li>连线成功后，将根据概率表进行抽奖，获得额外奖励；</li>
+                    <li>分享活动页面、在房间停留5分钟，充值任意金额任务获得宝石日上限1次，收礼任务获得宝石无上限；</li>
+                    <li>活动结束时，未消耗的宝石将清空失效，请您在活动期间及时使用；</li>
+                </ul>
             </div>
         </div>
     </div>
@@ -836,7 +1051,7 @@
     
     <!-- 抽奖弹窗 -->
     <div class="modal" id="lotteryModal">
-        <div class="modal-content lottery-modal-content">
+        <div class="modal-content">
             <div class="reward-icon">
                 <i class="fas fa-trophy"></i>
             </div>
@@ -847,26 +1062,13 @@
                 <!-- 抽奖结果通过JS生成 -->
             </div>
             
-            <table class="probability-table">
-                <thead>
-                    <tr>
-                        <th>项目</th>
-                        <th>金额</th>
-                        <th>占比</th>
-                    </tr>
-                </thead>
-                <tbody id="probabilityTable">
-                    <!-- 概率表通过JS生成 -->
-                </tbody>
-            </table>
-            
             <button class="close-modal" id="closeLotteryModal">领取奖励</button>
         </div>
     </div>
     
     <!-- 获取宝石弹窗 -->
     <div class="modal" id="gemModal">
-        <div class="modal-content gem-modal-content">
+        <div class="modal-content">
             <div class="reward-icon">
                 <i class="fas fa-gem"></i>
             </div>
@@ -918,25 +1120,50 @@
         </div>
     </div>
     
+    <!-- 概率表弹窗 -->
+    <div class="modal" id="probabilityModal">
+        <div class="modal-content">
+            <div class="reward-icon">
+                <i class="fas fa-percentage"></i>
+            </div>
+            <h2 class="reward-title">抽奖概率表</h2>
+            
+            <table class="probability-table">
+                <thead>
+                    <tr>
+                        <th>项目</th>
+                        <th>金额</th>
+                        <th>占比</th>
+                    </tr>
+                </thead>
+                <tbody id="probabilityTable">
+                    <!-- 概率表通过JS生成 -->
+                </tbody>
+            </table>
+            
+            <button class="close-modal" id="closeProbabilityModal">关闭</button>
+        </div>
+    </div>
+    
     <!-- 底部导航 -->
     <div class="bottom-nav">
-        <div class="nav-item active">
+        <div class="nav-item active" data-page="home">
             <i class="fas fa-home"></i>
             <span>首页</span>
         </div>
-        <div class="nav-item">
+        <div class="nav-item" data-page="rules">
             <i class="fas fa-list-alt"></i>
             <span>规则</span>
         </div>
-        <div class="nav-item">
-            <i class="fas fa-comments"></i>
-            <span>聊天</span>
+        <div class="nav-item" data-page="probability">
+            <i class="fas fa-percentage"></i>
+            <span>概率</span>
         </div>
-        <div class="nav-item">
+        <div class="nav-item" data-page="rank">
             <i class="fas fa-chart-bar"></i>
             <span>榜单</span>
         </div>
-        <div class="nav-item">
+        <div class="nav-item" data-page="reward">
             <i class="fas fa-award"></i>
             <span>奖励</span>
         </div>
@@ -1016,12 +1243,14 @@
         const lotteryModal = document.getElementById('lotteryModal');
         const gemModal = document.getElementById('gemModal');
         const diamondModal = document.getElementById('diamondModal');
+        const probabilityModal = document.getElementById('probabilityModal');
         const rewardTitle = document.getElementById('rewardTitle');
         const rewardDesc = document.getElementById('rewardDesc');
         const closeModalBtn = document.getElementById('closeModal');
         const closeLotteryModalBtn = document.getElementById('closeLotteryModal');
         const closeGemModalBtn = document.getElementById('closeGemModal');
         const closeDiamondModalBtn = document.getElementById('closeDiamondModal');
+        const closeProbabilityModalBtn = document.getElementById('closeProbabilityModal');
         const progressText = document.getElementById('progressText');
         const progressFill = document.getElementById('progressFill');
         const gemOptions = document.getElementById('gemOptions');
@@ -1033,6 +1262,9 @@
         const totalUsedElement = document.getElementById('totalUsed');
         const singleSummonElement = document.getElementById('singleSummon');
         const tenSummonElement = document.getElementById('tenSummon');
+
+        // 页面切换
+        let currentPage = 'home';
 
         // 初始化游戏
         function initGame() {
@@ -1054,6 +1286,7 @@
             closeLotteryModalBtn.addEventListener('click', closeLotteryModal);
             closeGemModalBtn.addEventListener('click', closeGemModal);
             closeDiamondModalBtn.addEventListener('click', closeDiamondModal);
+            closeProbabilityModalBtn.addEventListener('click', () => probabilityModal.style.display = 'none');
             
             // 钻石选项点击事件
             document.querySelectorAll('.diamond-option').forEach(option => {
@@ -1063,27 +1296,54 @@
                 });
             });
             
-            // 点击图腾格子的效果
-            document.querySelectorAll('.totem-cell').forEach(cell => {
-                cell.addEventListener('click', () => {
-                    const index = parseInt(cell.dataset.index);
-                    if (gameState.activeCells.has(index)) {
-                        // 如果格子已激活，显示奖励
-                        showReward("图腾奖励", `恭喜获得图腾奖励：${gameState.totemIcons[index % gameState.totemIcons.length]} 图腾`);
-                    }
+            // 底部导航点击事件
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const page = this.dataset.page;
+                    switchPage(page);
                 });
             });
             
-            // 底部导航点击效果
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.addEventListener('click', function() {
-                    document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    // 实际应用中这里会切换到对应页面
-                    const pageName = this.querySelector('span').textContent;
-                    showReward("导航", `切换到${pageName}页面`);
-                });
+            // 初始化页面
+            switchPage('home');
+        }
+
+        // 切换页面
+        function switchPage(page) {
+            // 更新导航状态
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+            document.querySelector(`.nav-item[data-page="${page}"]`).classList.add('active');
+            
+            // 关闭所有弹窗
+            closeAllModals();
+            
+            // 处理页面切换
+            currentPage = page;
+            switch(page) {
+                case 'home':
+                    // 首页已显示，无需操作
+                    break;
+                case 'rules':
+                    // 规则页面已在主内容中显示，滚动到规则区域
+                    document.querySelector('.panel:last-child').scrollIntoView({ behavior: 'smooth' });
+                    break;
+                case 'probability':
+                    probabilityModal.style.display = 'flex';
+                    break;
+                case 'rank':
+                    showReward("榜单功能", "榜单功能正在开发中，敬请期待！");
+                    break;
+                case 'reward':
+                    showReward("奖励中心", "奖励中心正在开发中，敬请期待！");
+                    break;
+            }
+        }
+
+        // 关闭所有弹窗
+        function closeAllModals() {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                modal.style.display = 'none';
             });
         }
 
@@ -1111,6 +1371,7 @@
             gameState.tasks.forEach(task => {
                 const taskElement = document.createElement('div');
                 taskElement.className = `task-item ${task.completed ? 'task-complete' : ''}`;
+                taskElement.dataset.taskId = task.id;
                 
                 taskElement.innerHTML = `
                     <div class="task-info">
@@ -1142,7 +1403,9 @@
                 
                 optionElement.innerHTML = `
                     <div class="gem-option-info">
-                        <i class="${option.icon} gem-option-icon"></i>
+                        <div class="gem-option-icon">
+                            <i class="${option.icon}"></i>
+                        </div>
                         <div>
                             <h4>${option.name}</h4>
                             <p>${option.desc}</p>
@@ -1445,6 +1708,11 @@
             diamondModal.style.display = 'none';
         }
 
+        // 关闭奖励弹窗
+        function closeRewardModal() {
+            rewardModal.style.display = 'none';
+        }
+
         // 关闭抽奖弹窗
         function closeLotteryModal() {
             lotteryModal.style.display = 'none';
@@ -1455,11 +1723,6 @@
             rewardTitle.textContent = title;
             rewardDesc.textContent = description;
             rewardModal.style.display = 'flex';
-        }
-
-        // 关闭奖励弹窗
-        function closeRewardModal() {
-            rewardModal.style.display = 'none';
         }
 
         // 更新货币数量显示
@@ -1486,6 +1749,21 @@
 
         // 页面加载完成后初始化游戏
         document.addEventListener('DOMContentLoaded', initGame);
+        
+        // 防止双击缩放
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(event) {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+        
+        // 禁止双指缩放
+        document.addEventListener('gesturestart', function(event) {
+            event.preventDefault();
+        });
     </script>
 </body>
 </html>
